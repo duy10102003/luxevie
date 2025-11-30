@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body { @apply bg-gray-50 text-gray-800 font-sans; }
+}
+
+@layer components {
+  .btn-primary { @apply inline-flex items-center justify-center rounded-xl bg-black text-white px-4 py-2.5 font-semibold hover:opacity-90 transition disabled:opacity-60 disabled:cursor-not-allowed; }
+  .btn-ghost  { @apply inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-4 py-2.5 hover:bg-gray-50; }
+  .input      { @apply w-full rounded-xl border border-gray-300 px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-gray-900/20 bg-white; }
+  
+  /* Custom Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+  
+  /* Hide scrollbar for horizontal scroll */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+.hero-gradient{background:linear-gradient(135deg,rgba(79,70,229,.1) 0%,rgba(16,185,129,.1) 100%)}
+.product-card:hover{transform:translateY(-5px);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 10px 10px -5px rgba(0,0,0,.04)}
