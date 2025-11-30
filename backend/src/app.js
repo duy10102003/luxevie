@@ -19,13 +19,7 @@ const allowed = [
 ].filter(Boolean);
 
 // middleware CORS
-app.use(
-  cors({
-    origin: true, // cho phép tất cả origin
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+app.use(cors());
 
 // Body parsers
 app.use(express.json({ limit: "1mb" }));
