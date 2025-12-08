@@ -184,9 +184,10 @@ export const cancelMyOrder = async (req, res) => {
 
   // hoàn tồn khi huỷ
   await restoreStock(order.items);
-
-  order.status = 'canceled';
-  order.timeline.push({ status: 'canceled', note: 'User canceled' });
+  
+  order.status = 'cancelled';
+  order.timeline = order.timeline || [];
+  order.timeline.push({ status: 'cancelled', note: 'User cancelled',at: new Date() });
   await order.save();
 
   res.json({ order });
