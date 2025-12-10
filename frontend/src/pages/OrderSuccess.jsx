@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { fetchOrderById } from '../services/orders';
 import { checkMoMoPaymentStatus, confirmMoMoPayment } from '../services/momo';
+import cart from '../services/cart';
 
 function StatusBadge({ status }) {
   const statusConfig = {
@@ -58,6 +59,7 @@ export default function OrderSuccess() {
         setLoading(true);
         try {
           const orderData = await fetchOrderById(id);
+          console.log('OrderSuccess loaded data:', orderData);
           setOrder(orderData);
 
           // Kiểm tra nếu có resultCode từ MoMo redirect (thanh toán thành công)
@@ -83,6 +85,7 @@ export default function OrderSuccess() {
               if (confirmResult.success && confirmResult.order) {
                 setOrder(confirmResult.order);
                 console.log('✅ Payment confirmed successfully');
+                cart.clear(); // Xóa giỏ hàng sau khi thanh toán thành công
               }
             } catch (confirmError) {
               console.error('Error confirming MoMo payment:', confirmError);
@@ -216,10 +219,10 @@ export default function OrderSuccess() {
                           {/* Product Image */}
                           <div className="flex-shrink-0">
                             <div className="w-24 h-24 sm:w-28 sm:h-28 bg-gray-100 rounded-2xl overflow-hidden border border-gray-200">
-                              {item.productId?.images?.[0]?.url ? (
+                              {(item.productId?.images?.[0]?.url || item.productId?.images?.[0] || item.image) ? (
                                 <img
-                                  src={item.productId.images[0].url}
-                                  alt={item.productId.images[0].alt || item.name}
+                                  src={item.productId?.images?.[0]?.url || item.productId?.images?.[0] || item.image}
+                                  alt={item.name}
                                   className="w-full h-full object-cover"
                                 />
                               ) : (
@@ -324,21 +327,25 @@ export default function OrderSuccess() {
               </div>
               <div className="p-6">
                 <div className="space-y-2 text-sm">
-                  <p className="font-semibold text-gray-900">{order.shippingAddress.fullName || '—'}</p>
+                  <p className="font-semibold text-gray-900">{order.shippingAddress.fullName || order.user?.name || '—'}</p>
                   <p className="text-gray-600">{order.shippingAddress.phone || '—'}</p>
                   {order.shippingAddress.email && (
                     <p className="text-gray-600">{order.shippingAddress.email}</p>
                   )}
                   <div className="mt-3 pt-3 border-t border-gray-200">
-                    <p className="text-gray-700">
-                      {order.shippingAddress.line1 || ''}
-                      {order.shippingAddress.line2 && `, ${order.shippingAddress.line2}`}
+                    <p className="text-gray-700 font-medium">
+                      {[
+                        order.shippingAddress.address,
+                        order.shippingAddress.line1,
+                        order.shippingAddress.street
+                      ].filter(Boolean).find(x => x) || ''}
                     </p>
                     <p className="text-gray-700">
                       {[
-                        order.shippingAddress.ward,
-                        order.shippingAddress.district,
-                        order.shippingAddress.city
+                        order.shippingAddress.ward && `Phường ${order.shippingAddress.ward}`,
+                        order.shippingAddress.district && `Quận ${order.shippingAddress.district}`,
+                        order.shippingAddress.city && `TP ${order.shippingAddress.city}`,
+                        order.shippingAddress.province && `Tỉnh/TP ${order.shippingAddress.province}`
                       ].filter(Boolean).join(', ')}
                     </p>
                   </div>
