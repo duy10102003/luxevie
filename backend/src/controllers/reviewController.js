@@ -29,12 +29,23 @@ export const listReviews = async (req, res) => {
 
   const [items, total] = await Promise.all([
     Review.find({ productId: product._id })
+      .populate('userId', 'name avatarUrl')
       .sort({ createdAt: -1 })
       .skip(skip).limit(lim).lean(),
     Review.countDocuments({ productId: product._id }),
   ]);
 
-  res.json({ items, pagination: { page: pg, limit: lim, total } });
+  // Map userId to user for frontend compatibility
+  const mappedItems = items.map(i => {
+    // console.log('DEBUG: review item userId:', i.userId);
+    return { ...i, user: i.userId };
+  });
+
+  if (items.length > 0) {
+    console.log('DEBUG: First review user:', mappedItems[0].user);
+  }
+
+  res.json({ items: mappedItems, pagination: { page: pg, limit: lim, total } });
 };
 
 // POST /products/:idOrSlug/reviews
@@ -57,17 +68,24 @@ export const createReview = async (req, res) => {
     content: content.trim(),
   };
   if (req.user) {
+    console.log('DEBUG: createReview user found:', req.user);
     doc.userId = req.user.sub;
     // name ưu tiên từ req.body; nếu không có → lấy từ token user (nếu bạn muốn có thể query User để lấy name thật)
     doc.name = name || req.user.email?.split('@')[0] || 'User';
   } else {
+    console.log('DEBUG: createReview NO USER found');
     if (!name || !name.trim()) return res.status(400).json({ message: 'Name required' });
     doc.name = name.trim();
   }
 
   const review = await Review.create(doc);
   await recomputeProductRating(product._id);
-  res.status(201).json({ review });
+
+  // Fetch populated review to return user info (avatar)
+  const populated = await Review.findById(review._id).populate('userId', 'name avatarUrl').lean();
+  const responseReview = { ...populated, user: populated.userId };
+
+  res.status(201).json({ review: responseReview });
 };
 
 /** -------- Admin APIs -------- */
