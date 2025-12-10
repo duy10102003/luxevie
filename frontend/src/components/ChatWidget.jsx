@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_URL = "https://luxevie-backend-five.vercel.app/api";
 const SOCKET_URL = API_URL.replace("/api", "");
 
 export default function ChatWidget() {
