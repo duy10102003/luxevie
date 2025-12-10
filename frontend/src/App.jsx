@@ -68,6 +68,9 @@ import Banner from "./pages/admin/Images";
 import BrandSectionsList from "./pages/admin/BrandSectionsList";
 import BrandSectionForm from "./pages/admin/BrandSectionForm";
 import ProductCatalog from "./pages/admin/ProductCatalog";
+import AdminChat from "./pages/admin/AdminChat";
+import AdminReviews from "./pages/admin/AdminReviews";
+import ChatWidget from "./components/ChatWidget";
 
 
 function PublicChrome() {
@@ -76,6 +79,7 @@ function PublicChrome() {
       <SiteHeader />
       <Outlet />
       <SiteFooter />
+      <ChatWidget />
     </>
   );
 }
@@ -122,36 +126,38 @@ export default function App() {
                 <Route path="register" element={<Register />} />
                 <Route path="forgot" element={<Forgot />} />
                 <Route path="reset" element={<Reset />} />
-<Route path="profile" element={<Profile />} />
+                <Route path="profile" element={<Profile />} />
                 <Route element={<ProtectedRoute />}>
                   <Route path="orders" element={<Orders />} />
                 </Route>
               </Route>
 
               {/* Admin routes (không chèn public header/footer) */}
-             
+
 
 
 
               <Route element={<AdminRoute />}>
-  <Route path="/admin" element={<AdminLayout />}>
-    <Route index element={<Dashboard />} />{/* 👈 đây */}
-    <Route path="dashboard" element={<Dashboard />} />
-    <Route path="products" element={<ProductsList />} />
-    <Route path="products/new" element={<ProductForm />} />
-    <Route path="products/:id" element={<ProductForm />} />
-    <Route path="orders" element={<AdminOrdersList />} />
-    <Route path="orders/:id" element={<AdminOrderDetail />} />
-    <Route path="users" element={<UsersList />} />
-    <Route path="users/:id" element={<UserEdit />} />
-    <Route path="coupons" element={<AdminCouponsList />} />
-    <Route path="banners" element={<Banner />} />
-    <Route path="brand-sections" element={<BrandSectionsList />} />
-    <Route path="brand-sections/new" element={<BrandSectionForm />} />
-    <Route path="brand-sections/:id" element={<BrandSectionForm />} />
-    <Route path="product-catalog" element={<ProductCatalog />} />
-  </Route>
-</Route>
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<Dashboard />} />{/* 👈 đây */}
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="products" element={<ProductsList />} />
+                  <Route path="products/new" element={<ProductForm />} />
+                  <Route path="products/:id" element={<ProductForm />} />
+                  <Route path="orders" element={<AdminOrdersList />} />
+                  <Route path="orders/:id" element={<AdminOrderDetail />} />
+                  <Route path="users" element={<UsersList />} />
+                  <Route path="users/:id" element={<UserEdit />} />
+                  <Route path="coupons" element={<AdminCouponsList />} />
+                  <Route path="banners" element={<Banner />} />
+                  <Route path="brand-sections" element={<BrandSectionsList />} />
+                  <Route path="brand-sections/new" element={<BrandSectionForm />} />
+                  <Route path="brand-sections/:id" element={<BrandSectionForm />} />
+                  <Route path="product-catalog" element={<ProductCatalog />} />
+                  <Route path="reviews" element={<AdminReviews />} />
+                  <Route path="chat" element={<AdminChat />} />
+                </Route>
+              </Route>
 
               <Route path="*" element={<NotFound />} />
             </Routes>
