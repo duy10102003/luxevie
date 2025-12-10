@@ -26,6 +26,30 @@ export const authenticate = (req, res, next) => {
   }
 };
 
+
+
+/**
+ * Xác thực JWT nếu có token. Nếu không có hoặc lỗi token -> req.user = null, nhưng không throw 401.
+ */
+export const optionalAuth = (req, res, next) => {
+  const auth = req.headers.authorization || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
+
+  if (!token) {
+    req.user = null;
+    return next();
+  }
+
+  try {
+    const payload = verifyToken(token);
+    req.user = { sub: payload.sub, email: payload.email, role: payload.role };
+  } catch {
+    // Token lỗi -> coi như user chưa đăng nhập
+    req.user = null;
+  }
+  next();
+};
+
 /** Chỉ cho phép admin */
 export const requireAdmin = (req, res, next) => {
   if (req.user?.role !== 'admin') {
