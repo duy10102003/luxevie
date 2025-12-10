@@ -102,7 +102,7 @@ export default function SiteHeader() {
   // Top categories to exclude - only show subcategories (detailed categories)
   const TOP_CATEGORIES = [
     'ao', 'quan', 'giay-dep', 'giay dep', 'tui-vi', 'tui vi',
-    'mat-kinh', 'mat kinh', 'dong-ho', 'dong ho', 
+    'mat-kinh', 'mat kinh', 'dong-ho', 'dong ho',
     'phu-kien', 'phu kien', 'trang-suc', 'trang suc',
     'ÁO', 'QUẦN', 'GIÀY DÉP', 'TÚI VÍ',
     'MẮT KÍNH', 'ĐỒNG HỒ', 'PHỤ KIỆN', 'TRANG SỨC',
@@ -116,7 +116,7 @@ export default function SiteHeader() {
   const normalizeCategoryName = (category) => {
     if (!category) return '';
     let normalized = category.trim();
-    
+
     // Remove gender suffixes: -nam, -nu, -nam-nu, nam, nu
     normalized = normalized
       .replace(/-nam-nu$/i, '')
@@ -127,7 +127,7 @@ export default function SiteHeader() {
       .replace(/^nam-/i, '')
       .replace(/^nu-/i, '')
       .trim();
-    
+
     // Capitalize first letter of each word
     return normalized
       .split(/[\s-–—]+/)
@@ -140,30 +140,30 @@ export default function SiteHeader() {
   const shouldExcludeCategory = (category) => {
     if (!category) return true;
     const catLower = category.toLowerCase().trim();
-    
+
     // Exclude if it's just "NAM" or "NU"
     if (catLower === 'nam' || catLower === 'nu') {
       return true;
     }
-    
+
     // Check for exact match with top categories
     const isExactMatch = TOP_CATEGORIES.some(topCat => {
       const topCatLower = topCat.toLowerCase().trim();
       return topCatLower === catLower;
     });
-    
+
     if (isExactMatch) return true;
-    
+
     // Check if it's a single word that matches a top category
     const words = catLower.split(/[\s-–—]+/).filter(w => w.length > 0 && w !== 'nam' && w !== 'nu');
-    
+
     if (words.length === 1) {
       return TOP_CATEGORIES.some(topCat => {
         const topWords = topCat.toLowerCase().trim().split(/[\s-–—]+/);
         return topWords.includes(words[0]);
       });
     }
-    
+
     return false;
   };
 
@@ -228,22 +228,22 @@ export default function SiteHeader() {
   // Fetch subcategories and bestseller products when hovering over category
   useEffect(() => {
     if (!hoveredCategory) return;
-    
+
     // Check if data already loaded
     if (categoryData[hoveredCategory]) return;
-    
+
     let alive = true;
     (async () => {
       try {
         // Get parent category from map
         const parentCategory = CATEGORY_PARENT_MAP[hoveredCategory];
-        
+
         // Fetch subcategories from API (fetch both nam and nu)
         const [subcategoriesNam, subcategoriesNu] = await Promise.all([
           fetchSubcategories(parentCategory, 'nam'),
           fetchSubcategories(parentCategory, 'nu'),
         ]);
-        
+
         // Combine and deduplicate by slug, prefer display name
         const subcategoriesMap = new Map();
         [...subcategoriesNam, ...subcategoriesNu].forEach(subcat => {
@@ -254,18 +254,18 @@ export default function SiteHeader() {
             });
           }
         });
-        
+
         const subcategories = Array.from(subcategoriesMap.values());
-        
+
         // Fetch 3 bestseller products
         const { items } = await listProducts({
           topCategory: hoveredCategory,
           sort: 'sold_desc',
           limit: 3,
         });
-        
+
         if (!alive) return;
-        
+
         setCategoryData(prev => ({
           ...prev,
           [hoveredCategory]: {
@@ -289,7 +289,7 @@ export default function SiteHeader() {
         }));
       }
     })();
-    
+
     return () => { alive = false; };
   }, [hoveredCategory, categoryData]);
 
@@ -322,17 +322,17 @@ export default function SiteHeader() {
         {/* Left: Logo + nav */}
         <div className="flex items-center gap-4">
           <Link to="/" className="flex items-center">
-            <img 
-              src="https://res.cloudinary.com/dqawqvxcr/image/upload/v1761117182/LuxeVie_2_zvsptx.png" 
-              alt="LuxeVie Logo" 
+            <img
+              src="https://res.cloudinary.com/dqawqvxcr/image/upload/v1761117182/LuxeVie_2_zvsptx.png"
+              alt="LuxeVie Logo"
               className="h-10 w-auto object-contain"
             />
           </Link>
           <nav className="hidden md:flex items-center gap-4">
-            <NavLink to="/" end className={({isActive})=>`${linkBase} ${isActive?linkActive:''}`}>TRANG CHỦ</NavLink>
-            
+            <NavLink to="/" end className={({ isActive }) => `${linkBase} ${isActive ? linkActive : ''}`}>TRANG CHỦ</NavLink>
+
             {/* THƯƠNG HIỆU Dropdown */}
-            <div 
+            <div
               ref={brandsDropdownRef}
               className="relative"
               onMouseEnter={() => setShowBrandsDropdown(true)}
@@ -341,7 +341,7 @@ export default function SiteHeader() {
               <button className={`${linkBase} ${showBrandsDropdown ? linkActive : ''}`}>
                 THƯƠNG HIỆU
               </button>
-              
+
               {showBrandsDropdown && (
                 <div className="absolute top-full left-0 mt-2 w-[600px] bg-white border border-gray-200 rounded-lg shadow-xl p-6 z-50">
                   <h3 className="text-sm font-bold text-gray-900 uppercase mb-4">Thương hiệu</h3>
@@ -362,23 +362,23 @@ export default function SiteHeader() {
                               alt={brand.name}
                               className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
                               onError={(e) => {
-                              e.target.src = 'https://via.placeholder.com/120x60?text=' + encodeURIComponent(brand.name);
-                            }}
-                          />
-                        </div>
-                        <p className="text-xs text-gray-600 text-center group-hover:text-gray-900 transition-colors">
-                          {brand.name}
-                        </p>
-                      </Link>
-                    ))
+                                e.target.src = 'https://via.placeholder.com/120x60?text=' + encodeURIComponent(brand.name);
+                              }}
+                            />
+                          </div>
+                          <p className="text-xs text-gray-600 text-center group-hover:text-gray-900 transition-colors">
+                            {brand.name}
+                          </p>
+                        </Link>
+                      ))
                     )}
                   </div>
                 </div>
               )}
             </div>
-            
+
             {/* ĐÃ XOÁ: SẢN PHẨM, ÁO, QUẦN, PHỤ KIỆN khỏi menu chính */}
-            <NavLink to="/collection?collection=khuyen-mai" className={({isActive})=>`${linkBase} ${isActive?linkActive:''}`}>KHUYẾN MÃI</NavLink>
+            <NavLink to="/collection?collection=khuyen-mai" className={({ isActive }) => `${linkBase} ${isActive ? linkActive : ''}`}>KHUYẾN MÃI</NavLink>
           </nav>
         </div>
 
@@ -402,18 +402,22 @@ export default function SiteHeader() {
                 onClick={() => setOpen(!open)}
                 className="list-none cursor-pointer px-3 py-2 rounded-full border border-gray-200 hover:bg-gray-50 text-sm flex items-center gap-2"
               >
-                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-black text-white">
-                  {String(user.name || user.email || "U").slice(0,1).toUpperCase()}
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 overflow-hidden border border-gray-200">
+                  {user.avatarUrl ? (
+                    <img src={user.avatarUrl} alt="avatar" className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="font-bold text-gray-600">{String(user.name || user.email || "U").slice(0, 1).toUpperCase()}</span>
+                  )}
                 </span>
                 <span className="hidden sm:block">{user.name || user.email}</span>
                 <span className="ml-1 text-gray-500">▾</span>
               </button>
               {open && (
                 <div className="absolute right-0 mt-2 w-56 rounded-xl border bg-white shadow-2xl p-1 z-50">
-                  <Link to="/orders" className="block px-3 py-2 rounded-lg text-sm hover:bg-gray-50" onClick={()=>setOpen(false)}>Đơn hàng của tôi</Link>
-                  <Link to="/profile" className="block px-3 py-2 rounded-lg text-sm hover:bg-gray-50" onClick={()=>setOpen(false)}>Hồ sơ</Link>
+                  <Link to="/orders" className="block px-3 py-2 rounded-lg text-sm hover:bg-gray-50" onClick={() => setOpen(false)}>Đơn hàng của tôi</Link>
+                  <Link to="/profile" className="block px-3 py-2 rounded-lg text-sm hover:bg-gray-50" onClick={() => setOpen(false)}>Hồ sơ</Link>
                   {isAdmin && (
-                    <Link to="/admin" className="block px-3 py-2 rounded-lg text-sm hover:bg-gray-50" onClick={()=>setOpen(false)}>Trang quản trị</Link>
+                    <Link to="/admin" className="block px-3 py-2 rounded-lg text-sm hover:bg-gray-50" onClick={() => setOpen(false)}>Trang quản trị</Link>
                   )}
                   <button onClick={handleLogout} className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-gray-50 text-red-600">Đăng xuất</button>
                 </div>
@@ -424,7 +428,7 @@ export default function SiteHeader() {
       </Container>
 
       {/* Secondary Menu */}
-      <div 
+      <div
         ref={megaMenuRef}
         className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-t border-gray-700/50 shadow-lg relative z-30"
         onMouseLeave={() => setHoveredCategory(null)}
@@ -437,13 +441,12 @@ export default function SiteHeader() {
                 className="relative"
                 onMouseEnter={() => setHoveredCategory(cat.key)}
               >
-                <NavLink 
-                  to={cat.path} 
-                  className={({ isActive }) => 
-                    `relative px-4 py-3.5 transition-all duration-300 block ${
-                      isActive 
-                        ? 'text-yellow-400 font-bold' 
-                        : 'text-gray-200 hover:text-yellow-400'
+                <NavLink
+                  to={cat.path}
+                  className={({ isActive }) =>
+                    `relative px-4 py-3.5 transition-all duration-300 block ${isActive
+                      ? 'text-yellow-400 font-bold'
+                      : 'text-gray-200 hover:text-yellow-400'
                     } hover:scale-105`
                   }
                 >
@@ -467,7 +470,7 @@ export default function SiteHeader() {
                       const subcatObj = typeof subcat === 'object' ? subcat : { normalized: subcat, original: subcat };
                       const displayName = subcatObj.normalized;
                       const originalCat = subcatObj.original;
-                      
+
                       return (
                         <li key={idx} className="border-b border-gray-200 last:border-b-0">
                           <Link
@@ -486,14 +489,14 @@ export default function SiteHeader() {
                     )}
                   </ul>
                 </div>
-                
+
                 {/* Right Column: Featured Products (3 products) */}
                 <div className="col-span-3 px-6 py-4">
                   <div className="grid grid-cols-3 gap-6">
                     {(categoryData[hoveredCategory]?.products || []).map((product) => {
                       const salePrice = product.salePrice > 0 ? product.salePrice : null;
                       const displayPrice = salePrice || product.price || 0;
-                      
+
                       return (
                         <Link
                           key={product._id}
