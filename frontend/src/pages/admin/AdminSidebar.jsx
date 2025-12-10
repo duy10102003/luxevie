@@ -5,7 +5,7 @@ const item = (to, label, icon) => (
     to={to}
     className={({ isActive }) =>
       `flex items-center gap-3 px-3 py-2 rounded-lg text-sm 
-       hover:bg-gray-100 ${isActive ? 'bg-gray-100 font-medium' : ''}`
+       hover:bg-gray-100 ${isActive ? "bg-gray-100 font-medium" : ""}`
     }
   >
     <span className="text-gray-500">{icon}</span>
@@ -36,7 +36,6 @@ export default function AdminSidebar() {
         {item("/admin/brand-sections", "Brand Sections", "⭐")}
         {item("/admin/product-catalog", "Product Catalog", "📋")}
         {item("/admin/reviews", "Reviews (Đánh giá)", "⭐")}
-        {item("/admin/chat", "Chat Support", "💬")}
       </div>
     </aside>
   );
